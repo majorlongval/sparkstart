@@ -1,6 +1,8 @@
 import pathlib
 import typer
-from projinit.core import create_project
+import shutil
+from projinit.core import create_project, delete_project
+
 
 app = typer.Typer(
     help="projinit – create a new project repository quickly",
@@ -10,15 +12,21 @@ app = typer.Typer(
 
 
 # --- root alias ----------------------------------------------------
-@app.callback()
+@app.callback(invoke_without_command=True)
 def main(
     ctx: typer.Context,
-    name: str = typer.Argument(None, help="Project name"),
-    github: bool = typer.Option(False, "--github", help="Push to GitHub"),
+    # name argument removed to avoid "stealing" the subcommand
 ):
-    """If NAME is supplied directly, behave like `projinit new NAME`."""
-    if name is not None:
-        create_project(pathlib.Path.cwd() / name, github)
+    """
+    projinit – Start your new project in seconds.
+    
+    Usage:
+        projinit new <name>
+        projinit delete <name>
+    """
+    if ctx.invoked_subcommand is None:
+        # If no subcommand is provided, show the help message
+        print(ctx.get_help())
         raise typer.Exit()
 
 
@@ -30,3 +38,22 @@ def new(
 ):
     """Create a new project folder NAME (optionally push to GitHub)."""
     create_project(pathlib.Path.cwd() / name, github)
+
+
+@app.command()
+def delete(
+    name: str,
+    github: bool = typer.Option(False, "--github"),
+    force: bool = typer.Option(False, "--yes", "-y"),
+):
+    target = pathlib.Path.cwd() / name
+    if not force:
+        typer.confirm(f"Delete {'and remote ' if github else ''}{target} ?", abort=True)
+
+    try:
+        from projinit.core import delete_project
+
+        delete_project(target, github)
+        typer.secho("Project deleted !", fg=typer.colors.GREEN)
+    except Exception as e:
+        typer.secho(f"Failed : {e}", fg=typer.colors.RED)
