@@ -77,6 +77,78 @@ NEW_TOKEN_URL = (
     "https://github.com/settings/tokens/new?description=projinit:{name}&scopes=repo,delete_repo,user"
 )
 
+DEVCONTAINER_JSON = textwrap.dedent("""
+    {
+      "name": "C++",
+      "image": "mcr.microsoft.com/devcontainers/cpp:1-debian-12",
+      "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+          "installZsh": true,
+          "configureZshAsDefaultShell": true,
+          "installOhMyZsh": true,
+          "upgradePackages": true
+        }
+      },
+      "customizations": {
+        "vscode": {
+          "extensions": [
+            "ms-vscode.cpptools",
+            "ms-vscode.cmake-tools",
+            "waderyan.gitblame"
+          ]
+        }
+      }
+    }
+""").strip()
+
+README_CPP = textwrap.dedent("""
+    # {name}
+    
+    A C++ project initialized by `sparkstart`.
+    
+    ## 🚀 Quick Start
+    
+    ### Prerequisites
+    - **C++ Compiler** (g++, clang++, or MSVC)
+    - **CMake** (3.15+)
+    - **Conan** (Optional, for dependencies)
+    
+    ### Build & Run
+    We use an **out-of-source** build workflow to keep your source directory clean.
+    
+    ```bash
+    # 1. Configure (Generate Build Files)
+    cd build
+    cmake ..
+    
+    # 2. Build (Compile)
+    cmake --build .
+    
+    # 3. Run
+    ./{name}
+    ```
+    
+    ## 📂 Project Structure
+    - `src/`             - Your C++ source files (Start with main.cpp)
+    - `build/`           - Build artifacts (Makefiles, binaries) - keep this clean!
+    - `CMakeLists.txt`   - The "Recipe" for CMake to build your project
+    - `conanfile.txt`    - List of libraries you want to install
+    
+    ## 📚 "How-To" Mini-Guides
+    
+    ### How to add a new Source Folder?
+    1. Create the folder (e.g. `src/utils/`)
+    2. Add a `CMakeLists.txt` inside strictly identifying its library name.
+    3. In the main `CMakeLists.txt`, add: `add_subdirectory(src/utils)`
+    *(See comments in CMakeLists.txt for examples)*
+    
+    ### How to add a Dependency (Library)?
+    1. Search for it on [Conan Center](https://conan.io/center) (e.g. `fmt`).
+    2. Add it to `conanfile.txt` under `[requires]`.
+    3. Run: `conan install . --output-folder=build --build=missing`
+    4. Uncomment the Conan lines in `CMakeLists.txt` to link it.
+""").strip()
+
 
 # ----------------------------------------------------------------------------- #
 # Helper functions                                                              #
@@ -109,6 +181,16 @@ def _save_project_token(project_root: pathlib.Path, token: str | None) -> None:
     if ".projinit.env" not in lines:
         lines.append(".projinit.env")
         gi.write_text("\n".join(lines) + "\n")
+
+
+def _scaffold_devcontainer(path: pathlib.Path, lang: str) -> None:
+    """Create .devcontainer configuration."""
+    if lang != "cpp":
+        # Only C++ supported for now (can expand later)
+        return
+
+    (path / ".devcontainer").mkdir()
+    (path / ".devcontainer" / "devcontainer.json").write_text(DEVCONTAINER_JSON + "\n")
 
 
 # ---------- GitHub API ------------------------------------------------------- #
@@ -247,6 +329,23 @@ def _scaffold_cpp(path: pathlib.Path) -> None:
             "  macOS:          xcode-select --install"
         )
     
+    # Check for CMake (Required for our project structure)
+    if shutil.which("cmake") is None:
+        raise RuntimeError(
+            "cmake not found. Install CMake to build the project:\n"
+            "  Ubuntu/Debian:  sudo apt install cmake\n"
+            "  Fedora:         sudo dnf install cmake\n"
+            "  Mac:            brew install cmake"
+        )
+
+    # Check for Conan (Optional / Warning)
+    if shutil.which("conan") is None:
+        import typer
+        typer.secho(
+            "WARNING: 'conan' not found. You will need it later to manage dependencies.\n"
+            "  Install: pip install conan",
+            fg=typer.colors.YELLOW
+        )
     (path / "src").mkdir()
     (path / "build").mkdir()  # Convention: out-of-source builds
     
@@ -310,6 +409,15 @@ def _scaffold_cpp(path: pathlib.Path) -> None:
         #     src/game.cpp
         # )
         # ------------------------------------------------------------------------------
+
+        # ------------------------------------------------------------------------------
+        # ADDING SUBDIRECTORIES (Tutorial)
+        # ------------------------------------------------------------------------------
+        # To organize code into folders (e.g. src/engine/), create a CMakeLists.txt inside
+        # that folder and use:
+        #
+        # add_subdirectory(src/engine)
+        # ------------------------------------------------------------------------------
         
         # ------------------------------------------------------------------------------
         # LINKING CONAN DEPENDENCIES (uncomment when you add libraries)
@@ -359,7 +467,7 @@ def _scaffold_cpp(path: pathlib.Path) -> None:
 # ----------------------------------------------------------------------------- #
 
 
-def create_project(path: pathlib.Path, github: bool = False, lang: str = "python") -> None:
+def create_project(path: pathlib.Path, github: bool = False, lang: str = "python", devcontainer: bool = False) -> None:
     """
     Make a fully-initialised project directory.
 
@@ -368,12 +476,16 @@ def create_project(path: pathlib.Path, github: bool = False, lang: str = "python
     path   : pathlib.Path  target directory (must not already exist)
     github : bool          if True, also create & push remote repo
     lang   : str           language: "python", "rust", "javascript", or "cpp"
+    devcontainer : bool    if True, generate .devcontainer config
     """
     # Create project folder
     path.mkdir(parents=False, exist_ok=False)
     
     # Add README
-    (path / "README.md").write_text(README_TEXT.format(name=path.name))
+    if lang == "cpp":
+        (path / "README.md").write_text(README_CPP.format(name=path.name))
+    else:
+        (path / "README.md").write_text(README_TEXT.format(name=path.name))
 
     # Language-specific scaffolding
     if lang == "python":
@@ -386,6 +498,10 @@ def create_project(path: pathlib.Path, github: bool = False, lang: str = "python
         _scaffold_cpp(path)
     else:
         raise ValueError(f"Unknown language: {lang}. Choose: python, rust, javascript, cpp")
+
+    # Dev Container
+    if devcontainer:
+        _scaffold_devcontainer(path, lang)
 
     # git repository
     if shutil.which("git") is None:

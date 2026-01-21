@@ -115,3 +115,15 @@ How hard is it to install these for the user?
 - Upload failed (403 Forbidden). Troubleshooting auth.
 - **Success:** Published v0.1.1 to PyPI. ✅
 
+---
+
+## 2026-01-21: v0.1.2 Features (C++ Polish)
+
+**Features Added:**
+- **Dependency Checks:** `sparkstart` now checks for `cmake` (required) and `conan` (optional).
+- **Enhanced Documentation:** C++ scaffolding now includes a detailed `README.md` and "mini-tutorials" in `CMakeLists.txt`.
+- **Dev Container Support:** Added `--devcontainer` flag to generate `.devcontainer/devcontainer.json`.
+
+**Status:** Ready to release v0.1.2.
+
+
