@@ -35,9 +35,11 @@ def main(
 def new(
     name: str,
     github: bool = typer.Option(False, "--github", help="Push to GitHub"),
+    lang: str = typer.Option("python", "--lang", "-l", help="Language: python, rust, javascript"),
 ):
     """Create a new project folder NAME (optionally push to GitHub)."""
-    create_project(pathlib.Path.cwd() / name, github)
+    create_project(pathlib.Path.cwd() / name, github, lang)
+
 
 
 @app.command()
