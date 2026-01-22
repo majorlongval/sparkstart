@@ -128,3 +128,17 @@ How hard is it to install these for the user?
 
 
 - **Success:** Published v0.1.2 to PyPI. ✅
+
+## 2026-01-21: Standalone Binary (MVP)
+
+**Goal:** Create a single-file executable to reduce "setup fatigue" for new users.
+
+**Implemented:**
+- Added `pyinstaller` to dev-dependencies.
+- Created `scripts/build_dist.py` automation.
+- **Output:** `dist/sparkstart` (Linux binary, ~18MB).
+
+**Verified:**
+- ✅ Binary runs without Python/pip on the path.
+- ✅ Successfully scaffolds a C++ project (`sparkstart new test --lang cpp`).
+- ✅ Dev container files are generated correctly.
