@@ -2,6 +2,7 @@ import pathlib
 import typer
 import shutil
 from sparkstart.core import create_project, delete_project
+from sparkstart.checks import check_docker, check_vscode
 
 
 app = typer.Typer(
@@ -40,6 +41,10 @@ def new(
     devcontainer: bool = typer.Option(False, "--devcontainer", "-d", help="Generate .devcontainer config (Docker required)"),
 ):
     """Create a new project folder NAME (optionally push to GitHub)."""
+    if devcontainer:
+        check_docker()
+        check_vscode()
+
     create_project(pathlib.Path.cwd() / name, github, lang, devcontainer, template)
 
 

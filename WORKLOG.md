@@ -142,3 +142,19 @@ How hard is it to install these for the user?
 - ✅ Binary runs without Python/pip on the path.
 - ✅ Successfully scaffolds a C++ project (`sparkstart new test --lang cpp`).
 - ✅ Dev container files are generated correctly.
+
+## 2026-01-21: Environment Detection (Milestone 2)
+
+**Goal:** Detect missing tools (Docker, VS Code) and guide the user to install them.
+
+**Implemented:**
+- Added `sparkstart.checks` module.
+- Integrated `check_docker()` and `check_vscode()` into CLI.
+- **Behavior:**
+  - If `sparkstart new ... --devcontainer` is run:
+  - Checks if `docker` and `code` are in PATH.
+  - If missing: Prints specific warning and opens the download page in the default browser.
+
+**Verified:**
+- ✅ Positive Test: Running on valid environment passes silently.
+- ✅ Negative Test: Simulated missing `docker` binary → correctly warned and attempted to open browser.
