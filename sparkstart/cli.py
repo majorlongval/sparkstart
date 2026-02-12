@@ -37,7 +37,8 @@ def new(
     name: str,
     github: bool = typer.Option(False, "--github", help="Push to GitHub"),
     lang: str = typer.Option("python", "--lang", "-l", help="Language: python, rust, javascript, cpp"),
-    template: str = typer.Option(None, "--template", "-t", help="Template: pygame (only for python)"),
+    template: str = typer.Option(None, "--template", help="Template: pygame (only for python)"),
+    tutorial: bool = typer.Option(False, "--tutorial", "-t", help="Create educational game project with tests"),
     devcontainer: bool = typer.Option(False, "--devcontainer", "-d", help="Generate .devcontainer config (Docker required)"),
 ):
     """Create a new project folder NAME (optionally push to GitHub)."""
@@ -45,7 +46,7 @@ def new(
         check_docker()
         check_vscode()
 
-    create_project(pathlib.Path.cwd() / name, github, lang, devcontainer, template)
+    create_project(pathlib.Path.cwd() / name, github, lang, devcontainer, template, tutorial)
 
 
 

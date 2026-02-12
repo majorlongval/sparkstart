@@ -30,11 +30,12 @@ from sparkstart.scaffolders.devcontainer import scaffold_devcontainer
 
 
 def create_project(
-    path: pathlib.Path, 
-    github: bool = False, 
-    lang: str = "python", 
+    path: pathlib.Path,
+    github: bool = False,
+    lang: str = "python",
     devcontainer: bool = False,
-    template: str | None = None
+    template: str | None = None,
+    tutorial: bool = False
 ) -> None:
     """
     Make a fully-initialised project directory.
@@ -46,27 +47,48 @@ def create_project(
     lang   : str           language: "python", "rust", "javascript", or "cpp"
     devcontainer : bool    if True, generate .devcontainer config
     template     : str     template name (e.g. "pygame") or None
+    tutorial     : bool    if True, create educational game project with tests
     """
     # Create project folder
     path.mkdir(parents=False, exist_ok=False)
-    
-    # Add README
-    if lang == "cpp":
-        (path / "README.md").write_text(README_CPP.format(name=path.name))
-    else:
-        (path / "README.md").write_text(README_TEXT.format(name=path.name))
 
-    # Language-specific scaffolding
-    if lang == "python":
-        scaffold_python(path, template)
-    elif lang == "rust":
-        scaffold_rust(path)
-    elif lang == "javascript":
-        scaffold_javascript(path)
-    elif lang == "cpp":
-        scaffold_cpp(path)
+    # Language-specific scaffolding (tutorial or standard)
+    if tutorial:
+        from sparkstart.scaffolders.tutorial import (
+            scaffold_tutorial_python,
+            scaffold_tutorial_rust,
+            scaffold_tutorial_javascript,
+            scaffold_tutorial_cpp,
+        )
+
+        if lang == "python":
+            scaffold_tutorial_python(path)
+        elif lang == "rust":
+            scaffold_tutorial_rust(path)
+        elif lang == "javascript":
+            scaffold_tutorial_javascript(path)
+        elif lang == "cpp":
+            scaffold_tutorial_cpp(path)
+        else:
+            raise ValueError(f"Unknown language: {lang}. Choose: python, rust, javascript, cpp")
     else:
-        raise ValueError(f"Unknown language: {lang}. Choose: python, rust, javascript, cpp")
+        # Add generic README for standard projects
+        if lang == "cpp":
+            (path / "README.md").write_text(README_CPP.format(name=path.name))
+        else:
+            (path / "README.md").write_text(README_TEXT.format(name=path.name))
+
+        # Standard scaffolding
+        if lang == "python":
+            scaffold_python(path, template)
+        elif lang == "rust":
+            scaffold_rust(path)
+        elif lang == "javascript":
+            scaffold_javascript(path)
+        elif lang == "cpp":
+            scaffold_cpp(path)
+        else:
+            raise ValueError(f"Unknown language: {lang}. Choose: python, rust, javascript, cpp")
 
     # Dev Container
     if devcontainer:
