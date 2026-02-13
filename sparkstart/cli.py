@@ -81,6 +81,7 @@ def new(
     template: str = typer.Option(None, "--template", help="Template: pygame (only for python)"),
     tutorial: bool = typer.Option(False, "--tutorial", "-t", help="Create educational game project with tests"),
     devcontainer: bool = typer.Option(None, "--devcontainer", "-d", help="Generate .devcontainer config (Docker required)"),
+    tools: bool = typer.Option(False, "--tools", help="Include formatters, linters, and pre-commit hooks"),
 ):
     """Create a new project (interactive wizard or direct mode with flags)."""
 
@@ -93,6 +94,7 @@ def new(
         devcontainer = config.devcontainer
         template = config.template
         github = config.github
+        tools = config.tools
     else:
         # Direct mode with flags - validate inputs
         try:
@@ -120,7 +122,7 @@ def new(
         check_docker()
         check_vscode()
 
-    create_project(pathlib.Path.cwd() / name, github, lang, devcontainer, template, tutorial)
+    create_project(pathlib.Path.cwd() / name, github, lang, devcontainer, template, tutorial, tools)
 
 
 

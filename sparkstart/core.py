@@ -30,6 +30,7 @@ from sparkstart.scaffolders.devcontainer import scaffold_devcontainer
 from sparkstart.scaffolders.direnv import scaffold_direnv
 from sparkstart.scaffolders.compose import scaffold_compose
 from sparkstart.scaffolders.guides import scaffold_getting_started
+from sparkstart.scaffolders.tools import scaffold_tools
 
 from sparkstart.utils.output import print_project_summary
 
@@ -40,7 +41,8 @@ def create_project(
     lang: str = "python",
     devcontainer: bool = False,
     template: str | None = None,
-    tutorial: bool = False
+    tutorial: bool = False,
+    tools: bool = False
 ) -> None:
     """
     Make a fully-initialised project directory.
@@ -53,6 +55,7 @@ def create_project(
     devcontainer : bool    if True, generate .devcontainer config
     template     : str     template name (e.g. "pygame") or None
     tutorial     : bool    if True, create educational game project with tests
+    tools        : bool    if True, include formatters, linters, and pre-commit hooks
     """
     # Create project folder
     path.mkdir(parents=False, exist_ok=False)
@@ -109,6 +112,10 @@ def create_project(
 
     # Educational documentation
     scaffold_getting_started(path, path.name, lang, devcontainer)
+
+    # Code quality tools (formatters, linters, pre-commit hooks)
+    if tools:
+        scaffold_tools(path, lang)
 
     # git repository
     if shutil.which("git") is None:

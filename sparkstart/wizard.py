@@ -22,6 +22,7 @@ class ProjectConfig:
         devcontainer: bool,
         template: Optional[str],
         github: bool,
+        tools: bool = False,
     ):
         self.name = name
         self.lang = lang
@@ -29,9 +30,10 @@ class ProjectConfig:
         self.devcontainer = devcontainer
         self.template = template
         self.github = github
+        self.tools = tools
 
     def __repr__(self) -> str:
-        return f"ProjectConfig(name={self.name}, lang={self.lang}, tutorial={self.tutorial}, devcontainer={self.devcontainer}, template={self.template}, github={self.github})"
+        return f"ProjectConfig(name={self.name}, lang={self.lang}, tutorial={self.tutorial}, devcontainer={self.devcontainer}, template={self.template}, github={self.github}, tools={self.tools})"
 
 
 def run_wizard() -> ProjectConfig:
@@ -98,6 +100,13 @@ def run_wizard() -> ProjectConfig:
     typer.echo("  • Push to GitHub (optional)")
     github = typer.confirm("Push to GitHub?", default=False)
 
+    # Code quality tools
+    typer.secho("\n🛠️  Code quality tools", fg=typer.colors.CYAN)
+    typer.echo("  • Formatters: black, prettier, rustfmt, clang-format")
+    typer.echo("  • Linters: ruff, eslint, clippy")
+    typer.echo("  • Pre-commit hooks for automatic checks")
+    tools = typer.confirm("Include code quality tools?", default=True)
+
     # Summary
     typer.secho("\n📋 Configuration Summary", fg=typer.colors.CYAN, bold=True)
     typer.echo(f"  Project name: {name}")
@@ -108,6 +117,8 @@ def run_wizard() -> ProjectConfig:
         typer.echo(f"  Template: {template}")
     if devcontainer:
         typer.echo("  Dev container: ✓ (Docker + direnv + compose)")
+    if tools:
+        typer.echo("  Code quality tools: ✓ (formatters, linters, pre-commit)")
     if github:
         typer.echo("  GitHub: ✓ (will push to remote)")
 
@@ -126,4 +137,5 @@ def run_wizard() -> ProjectConfig:
         devcontainer=devcontainer,
         template=template,
         github=github,
+        tools=tools,
     )
