@@ -27,6 +27,8 @@ from sparkstart.scaffolders.cpp import scaffold_cpp
 from sparkstart.scaffolders.rust import scaffold_rust
 from sparkstart.scaffolders.javascript import scaffold_javascript
 from sparkstart.scaffolders.devcontainer import scaffold_devcontainer
+from sparkstart.scaffolders.direnv import scaffold_direnv
+from sparkstart.scaffolders.compose import scaffold_compose
 
 
 def create_project(
@@ -90,7 +92,7 @@ def create_project(
         else:
             raise ValueError(f"Unknown language: {lang}. Choose: python, rust, javascript, cpp")
 
-    # Dev Container
+    # Dev Container + supporting configs
     if devcontainer:
         if shutil.which("docker") is None:
             import typer
@@ -99,6 +101,8 @@ def create_project(
                 fg=typer.colors.YELLOW
             )
         scaffold_devcontainer(path, lang)
+        scaffold_direnv(path, lang)
+        scaffold_compose(path, lang)
 
     # git repository
     if shutil.which("git") is None:

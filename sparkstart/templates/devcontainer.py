@@ -51,3 +51,53 @@ DEVCONTAINER_PYTHON = textwrap.dedent("""
       }
     }
 """).strip()
+
+DEVCONTAINER_RUST = textwrap.dedent("""
+    {
+      "name": "Rust",
+      "image": "mcr.microsoft.com/devcontainers/rust:1-bullseye",
+      "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+          "installZsh": true,
+          "configureZshAsDefaultShell": true,
+          "installOhMyZsh": true,
+          "upgradePackages": true
+        }
+      },
+      "postCreateCommand": "rustup component add rust-analyzer",
+      "customizations": {
+        "vscode": {
+          "extensions": [
+            "rust-lang.rust-analyzer",
+            "serayuzgur.crates",
+            "tamasfe.even-better-toml"
+          ]
+        }
+      }
+    }
+""").strip()
+
+DEVCONTAINER_JAVASCRIPT = textwrap.dedent("""
+    {
+      "name": "Node.js",
+      "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bullseye",
+      "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+          "installZsh": true,
+          "configureZshAsDefaultShell": true,
+          "installOhMyZsh": true,
+          "upgradePackages": true
+        }
+      },
+      "postCreateCommand": "npm install",
+      "customizations": {
+        "vscode": {
+          "extensions": [
+            "dbaeumer.vscode-eslint",
+            "esbenp.prettier-vscode",
+            "vue.volar"
+          ]
+        }
+      }
+    }
+""").strip()
