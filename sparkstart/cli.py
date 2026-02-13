@@ -8,7 +8,6 @@ from sparkstart.checks import check_docker, check_vscode
 app = typer.Typer(
     help="sparkstart – create a new project repository quickly",
     invoke_without_command=True,  # allows root alias
-    no_args_is_help=True,
 )
 
 
@@ -20,15 +19,48 @@ def main(
 ):
     """
     sparkstart – Start your new project in seconds.
-    
+
     Usage:
         sparkstart new <name>
         sparkstart delete <name>
     """
     if ctx.invoked_subcommand is None:
-        # If no subcommand is provided, show the help message
-        print(ctx.get_help())
+        # Show helpful welcome message
+        _print_welcome()
         raise typer.Exit()
+
+
+def _print_welcome() -> None:
+    """Print a welcoming, informative welcome message."""
+    typer.secho("\n🚀 sparkstart – Create a project in seconds\n", fg=typer.colors.GREEN, bold=True)
+
+    typer.secho("Usage:", fg=typer.colors.CYAN, bold=True)
+    typer.echo("  sparkstart new [NAME]          Create a new project (interactive wizard)")
+    typer.echo("  sparkstart new NAME --lang rust --devcontainer  # Skip wizard with flags")
+    typer.echo("  sparkstart delete NAME         Remove a project")
+
+    typer.secho("\nExamples:", fg=typer.colors.CYAN, bold=True)
+    typer.echo("  sparkstart new                 # Start with interactive wizard (recommended)")
+    typer.echo("  sparkstart new my-app          # Create Python project with defaults")
+    typer.echo("  sparkstart new my-game --lang python --template pygame --tutorial")
+
+    typer.secho("\nOptions:", fg=typer.colors.CYAN, bold=True)
+    typer.echo("  --lang LANGUAGE               python, rust, javascript, cpp (default: python)")
+    typer.echo("  --devcontainer               Include Docker dev environment")
+    typer.echo("  --tutorial                   Create educational game project with tests")
+    typer.echo("  --template TEMPLATE          pygame (python only)")
+    typer.echo("  --github                     Push to GitHub")
+
+    typer.secho("\nQuick Start:", fg=typer.colors.CYAN, bold=True)
+    typer.echo("  1. sparkstart new             # Interactive setup (recommended for first time)")
+    typer.echo("  2. cd my-project")
+    typer.echo("  3. cat GETTING_STARTED.md     # See what's included")
+
+    typer.secho("\nLearn More:", fg=typer.colors.CYAN, bold=True)
+    typer.echo("  Documentation: https://github.com/majorlongval/sparkstart")
+    typer.echo("  Issues: https://github.com/majorlongval/sparkstart/issues")
+
+    typer.secho("\nHappy coding! ✨\n", fg=typer.colors.GREEN)
 
 
 # --- explicit sub‑command -----------------------------------------
