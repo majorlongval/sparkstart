@@ -33,6 +33,7 @@ from sparkstart.scaffolders.guides import scaffold_getting_started
 from sparkstart.scaffolders.tools import scaffold_tools
 
 from sparkstart.utils.output import print_project_summary
+from sparkstart.utils.suggestions import suggest_git_not_found
 
 
 def create_project(
@@ -119,7 +120,9 @@ def create_project(
 
     # git repository
     if shutil.which("git") is None:
-        raise RuntimeError("`git` executable not found in PATH")
+        import typer
+        typer.secho(suggest_git_not_found(), fg=typer.colors.RED)
+        raise typer.Exit(1)
 
     # GitHub remote + push (optional)
     token: str | None = None
@@ -149,7 +152,7 @@ def create_project(
         run_shell(["git", "push", "-u", "origin", "main"], cwd=path)
 
     # Print friendly summary
-    print_project_summary(path, lang, devcontainer, github, tutorial)
+    print_project_summary(path, lang, devcontainer, github, tutorial, tools)
 
 
 def delete_project(path: pathlib.Path, github: bool = False) -> None:

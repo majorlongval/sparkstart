@@ -12,6 +12,15 @@ from sparkstart.validation import (
     check_project_exists,
     ValidationError,
 )
+from sparkstart.utils.suggestions import (
+    suggest_invalid_language,
+    suggest_invalid_template,
+    suggest_invalid_project_name,
+    suggest_project_exists,
+    suggest_docker_not_found,
+    suggest_git_not_found,
+)
+from sparkstart.utils.help import show_help_tutorial, show_quick_help
 
 
 app = typer.Typer(
@@ -100,22 +109,30 @@ def new(
         try:
             validate_project_name(name)
             if check_project_exists(name):
-                typer.secho(f"❌ Project '{name}' already exists", fg=typer.colors.RED)
+                typer.secho(suggest_project_exists(name), fg=typer.colors.RED)
                 raise typer.Exit(1)
 
             if lang is None:
                 lang = "python"
             else:
-                validate_language(lang)
+                try:
+                    validate_language(lang)
+                except ValidationError:
+                    typer.secho(suggest_invalid_language(lang), fg=typer.colors.RED)
+                    raise typer.Exit(1)
 
             if template is not None:
-                validate_template(template, lang)
+                try:
+                    validate_template(template, lang)
+                except ValidationError:
+                    typer.secho(suggest_invalid_template(template, lang), fg=typer.colors.RED)
+                    raise typer.Exit(1)
 
             if devcontainer is None:
                 devcontainer = False
 
         except ValidationError as e:
-            typer.secho(f"❌ Error: {str(e)}", fg=typer.colors.RED)
+            typer.secho(suggest_invalid_project_name(name, str(e)), fg=typer.colors.RED)
             raise typer.Exit(1)
 
     if devcontainer:
@@ -143,3 +160,15 @@ def delete(
         typer.secho("Project deleted !", fg=typer.colors.GREEN)
     except Exception as e:
         typer.secho(f"Failed : {e}", fg=typer.colors.RED)
+
+
+@app.command()
+def help() -> None:
+    """Show comprehensive help and tutorial."""
+    show_help_tutorial()
+
+
+@app.command()
+def version() -> None:
+    """Show version information."""
+    typer.echo("sparkstart version 1.0.0")

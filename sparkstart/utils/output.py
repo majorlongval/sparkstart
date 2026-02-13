@@ -4,7 +4,7 @@ import typer
 from pathlib import Path
 
 
-def print_project_summary(path: Path, lang: str, devcontainer: bool, github: bool, tutorial: bool) -> None:
+def print_project_summary(path: Path, lang: str, devcontainer: bool, github: bool, tutorial: bool, tools: bool = False) -> None:
     """Print a beautiful summary of what was created."""
 
     project_name = path.name
@@ -22,6 +22,9 @@ def print_project_summary(path: Path, lang: str, devcontainer: bool, github: boo
 
     if tutorial:
         items.append("  ✓ Educational game project with tests")
+
+    if tools:
+        items.append("  ✓ Code quality tools (formatters, linters, pre-commit hooks)")
 
     if devcontainer:
         items.extend([
@@ -74,6 +77,9 @@ def print_project_summary(path: Path, lang: str, devcontainer: bool, github: boo
 
     if not tutorial:
         typer.echo("  • Use --tutorial flag for educational game projects")
+
+    if not tools:
+        typer.echo("  • Use --tools flag to add formatters, linters, and pre-commit hooks")
 
     typer.echo("  • Check GETTING_STARTED.md for language-specific commands")
 
