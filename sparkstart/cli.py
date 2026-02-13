@@ -1,8 +1,10 @@
 import pathlib
 import typer
 import shutil
+from typing import Optional
 from sparkstart.core import create_project, delete_project
 from sparkstart.checks import check_docker, check_vscode
+from sparkstart.wizard import run_wizard
 
 
 app = typer.Typer(
@@ -66,14 +68,31 @@ def _print_welcome() -> None:
 # --- explicit sub‑command -----------------------------------------
 @app.command()
 def new(
-    name: str,
+    name: Optional[str] = typer.Argument(None, help="Project name (interactive wizard if omitted)"),
     github: bool = typer.Option(False, "--github", help="Push to GitHub"),
-    lang: str = typer.Option("python", "--lang", "-l", help="Language: python, rust, javascript, cpp"),
+    lang: str = typer.Option(None, "--lang", "-l", help="Language: python, rust, javascript, cpp"),
     template: str = typer.Option(None, "--template", help="Template: pygame (only for python)"),
     tutorial: bool = typer.Option(False, "--tutorial", "-t", help="Create educational game project with tests"),
-    devcontainer: bool = typer.Option(False, "--devcontainer", "-d", help="Generate .devcontainer config (Docker required)"),
+    devcontainer: bool = typer.Option(None, "--devcontainer", "-d", help="Generate .devcontainer config (Docker required)"),
 ):
-    """Create a new project folder NAME (optionally push to GitHub)."""
+    """Create a new project (interactive wizard or direct mode with flags)."""
+
+    # Launch wizard if name is not provided
+    if name is None:
+        config = run_wizard()
+        name = config.name
+        lang = config.lang
+        tutorial = config.tutorial
+        devcontainer = config.devcontainer
+        template = config.template
+        github = config.github
+    else:
+        # Direct mode with flags - use defaults
+        if lang is None:
+            lang = "python"
+        if devcontainer is None:
+            devcontainer = False
+
     if devcontainer:
         check_docker()
         check_vscode()
