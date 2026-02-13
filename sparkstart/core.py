@@ -29,6 +29,9 @@ from sparkstart.scaffolders.javascript import scaffold_javascript
 from sparkstart.scaffolders.devcontainer import scaffold_devcontainer
 from sparkstart.scaffolders.direnv import scaffold_direnv
 from sparkstart.scaffolders.compose import scaffold_compose
+from sparkstart.scaffolders.guides import scaffold_getting_started
+
+from sparkstart.utils.output import print_project_summary
 
 
 def create_project(
@@ -104,6 +107,9 @@ def create_project(
         scaffold_direnv(path, lang)
         scaffold_compose(path, lang)
 
+    # Educational documentation
+    scaffold_getting_started(path, path.name, lang, devcontainer)
+
     # git repository
     if shutil.which("git") is None:
         raise RuntimeError("`git` executable not found in PATH")
@@ -134,6 +140,9 @@ def create_project(
 
         run_shell(["git", "remote", "add", "origin", auth_repo_url], cwd=path)
         run_shell(["git", "push", "-u", "origin", "main"], cwd=path)
+
+    # Print friendly summary
+    print_project_summary(path, lang, devcontainer, github, tutorial)
 
 
 def delete_project(path: pathlib.Path, github: bool = False) -> None:
