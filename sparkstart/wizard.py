@@ -2,6 +2,13 @@
 
 import typer
 from typing import Optional
+from sparkstart.validation import (
+    validate_project_name,
+    validate_language,
+    validate_template,
+    check_project_exists,
+    ValidationError,
+)
 
 
 class ProjectConfig:
@@ -33,8 +40,19 @@ def run_wizard() -> ProjectConfig:
     typer.secho("\n🧙‍♂️  Welcome to sparkstart!\n", fg=typer.colors.GREEN, bold=True)
     typer.echo("Let's set up your new project. Answer a few quick questions.\n")
 
-    # Project name
-    name = typer.prompt("📝 Project name", default="my-project")
+    # Project name (with validation)
+    while True:
+        name = typer.prompt("📝 Project name", default="my-project")
+        try:
+            validate_project_name(name)
+            if check_project_exists(name):
+                typer.secho(f"⚠️  Project '{name}' already exists", fg=typer.colors.YELLOW)
+                if not typer.confirm("Use different name?", default=True):
+                    break
+                continue
+            break
+        except ValidationError as e:
+            typer.secho(f"❌ {str(e)}", fg=typer.colors.RED)
 
     # Language
     typer.secho("\n💻 What language are you using?", fg=typer.colors.CYAN)

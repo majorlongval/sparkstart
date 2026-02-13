@@ -5,6 +5,13 @@ from typing import Optional
 from sparkstart.core import create_project, delete_project
 from sparkstart.checks import check_docker, check_vscode
 from sparkstart.wizard import run_wizard
+from sparkstart.validation import (
+    validate_project_name,
+    validate_language,
+    validate_template,
+    check_project_exists,
+    ValidationError,
+)
 
 
 app = typer.Typer(
@@ -87,11 +94,27 @@ def new(
         template = config.template
         github = config.github
     else:
-        # Direct mode with flags - use defaults
-        if lang is None:
-            lang = "python"
-        if devcontainer is None:
-            devcontainer = False
+        # Direct mode with flags - validate inputs
+        try:
+            validate_project_name(name)
+            if check_project_exists(name):
+                typer.secho(f"❌ Project '{name}' already exists", fg=typer.colors.RED)
+                raise typer.Exit(1)
+
+            if lang is None:
+                lang = "python"
+            else:
+                validate_language(lang)
+
+            if template is not None:
+                validate_template(template, lang)
+
+            if devcontainer is None:
+                devcontainer = False
+
+        except ValidationError as e:
+            typer.secho(f"❌ Error: {str(e)}", fg=typer.colors.RED)
+            raise typer.Exit(1)
 
     if devcontainer:
         check_docker()
