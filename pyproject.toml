@@ -1,6 +1,6 @@
 [project]
 name = "sparkstart"
-version = "1.0.0"
+version = "1.0.1"
 description = "Create a new project in seconds, not hours. sparkstart handles all the boring setup so you can start coding immediately."
 authors = [{ name = "Jordan Longval", email = "majorlongval@gmail.com" }]
 readme = "README.md"
