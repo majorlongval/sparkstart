@@ -33,7 +33,7 @@ def get_getting_started(name: str, lang: str, has_devcontainer: bool) -> str:
             ### Option 1: Using direnv (Recommended)
             ```bash
             direnv allow           # Auto-activates virtual environment
-            pip install -r requirements.txt
+            pip install -e '.[test]'
             ```
 
             If you don't have direnv, install it: https://direnv.net
@@ -42,7 +42,7 @@ def get_getting_started(name: str, lang: str, has_devcontainer: bool) -> str:
             ```bash
             python3 -m venv .venv
             source .venv/bin/activate
-            pip install -r requirements.txt
+            pip install -e '.[test]'
             ```
 
             ### Running Your Code

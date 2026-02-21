@@ -39,7 +39,7 @@ class ProjectConfig:
 def run_wizard() -> ProjectConfig:
     """Run interactive wizard and return project configuration."""
 
-    typer.secho("\n🧙‍♂️  Welcome to sparkstart!\n", fg=typer.colors.GREEN, bold=True)
+    typer.secho("\n🧙  Welcome to sparkstart!\n", fg=typer.colors.GREEN, bold=True)
     typer.echo("Let's set up your new project. Answer a few quick questions.\n")
 
     # Project name (with validation)
@@ -95,10 +95,10 @@ def run_wizard() -> ProjectConfig:
     devcontainer = typer.confirm("Include dev container?", default=True)
 
     # GitHub
-    typer.secho("\n🚀 Version control", fg=typer.colors.CYAN)
-    typer.echo("  • Create local git repository (always)")
-    typer.echo("  • Push to GitHub (optional)")
-    github = typer.confirm("Push to GitHub?", default=False)
+    typer.secho("\n🌿 Git repository", fg=typer.colors.CYAN)
+    typer.echo("  • A local git repo is always initialized for you")
+    typer.echo("  • Optionally also create a remote repo and push to GitHub")
+    github = typer.confirm("Also push to GitHub?", default=False)
 
     # Code quality tools
     typer.secho("\n🛠️  Code quality tools", fg=typer.colors.CYAN)

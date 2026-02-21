@@ -6,7 +6,7 @@ import typer
 def show_help_tutorial() -> None:
     """Show comprehensive help and tutorial."""
     typer.secho("\n" + "=" * 60, fg=typer.colors.CYAN)
-    typer.secho("🧙‍♂️ SPARKSTART – Quick Project Setup", fg=typer.colors.CYAN, bold=True)
+    typer.secho("🧙 SPARKSTART – Quick Project Setup", fg=typer.colors.CYAN, bold=True)
     typer.secho("=" * 60 + "\n", fg=typer.colors.CYAN)
 
     # Getting Started

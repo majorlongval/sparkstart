@@ -53,7 +53,7 @@ def print_project_summary(path: Path, lang: str, devcontainer: bool, github: boo
         if lang == "python":
             typer.echo("  python3 -m venv .venv")
             typer.echo("  source .venv/bin/activate")
-            typer.echo("  pip install -r requirements.txt")
+            typer.echo("  pip install -e '.[test]'")
         elif lang == "javascript":
             typer.echo("  npm install")
         elif lang == "rust":

@@ -106,7 +106,6 @@ def scaffold_python(path: pathlib.Path, template: str | None = None) -> None:
     (path / "src" / "main.py").write_text(main_py + "\n")
     
     (path / ".gitignore").write_text(GITIGNORE_PYTHON + "\n")
-    (path / "requirements.txt").touch()
 
     # Create tests directory
     (path / "tests").mkdir()
