@@ -2,11 +2,11 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - master
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,24 +25,58 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine
 
-    - name: Build distribution
+    - name: Get version from pyproject.toml
+      id: version
       run: |
-        python -m build
+        VERSION=$(python -c "import tomllib; data = tomllib.load(open('pyproject.toml', 'rb')); print(data['project']['version'])")
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Detected version: $VERSION"
+
+    - name: Check if version already exists on PyPI
+      id: check
+      run: |
+        STATUS=$(python -c "
+        import urllib.request, urllib.error
+        try:
+            urllib.request.urlopen('https://pypi.org/pypi/sparkstart/${{ steps.version.outputs.version }}/json')
+            print('exists')
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                print('new')
+            else:
+                raise
+        ")
+        echo "status=$STATUS" >> $GITHUB_OUTPUT
+        echo "PyPI status for v${{ steps.version.outputs.version }}: $STATUS"
+
+    - name: Build distribution
+      if: steps.check.outputs.status == 'new'
+      run: python -m build
 
     - name: Check distribution
-      run: |
-        twine check dist/*
+      if: steps.check.outputs.status == 'new'
+      run: twine check dist/*
 
     - name: Publish to PyPI
+      if: steps.check.outputs.status == 'new'
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: twine upload dist/*
+
+    - name: Create Git tag
+      if: steps.check.outputs.status == 'new'
       run: |
-        twine upload dist/* --skip-existing
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag "v${{ steps.version.outputs.version }}"
+        git push origin "v${{ steps.version.outputs.version }}"
 
     - name: Create GitHub Release
+      if: steps.check.outputs.status == 'new'
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: v${{ steps.version.outputs.version }}
         body_path: CHANGELOG.md
         files: dist/*
         draft: false
@@ -50,18 +84,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  notify:
-    needs: build
-    runs-on: ubuntu-latest
-    if: success()
-
-    steps:
-    - name: Get tag version
-      id: tag
-      run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-
-    - name: Success message
-      run: |
-        echo "✅ Released sparkstart ${{ steps.tag.outputs.version }}"
-        echo "📦 Published to PyPI"
-        echo "🔗 GitHub Release created"
+    - name: Skip message
+      if: steps.check.outputs.status == 'exists'
+      run: echo "Version ${{ steps.version.outputs.version }} already on PyPI — bump the version in pyproject.toml to trigger a new release."
