@@ -27,14 +27,23 @@ from sparkstart.scaffolders.cpp import scaffold_cpp
 from sparkstart.scaffolders.rust import scaffold_rust
 from sparkstart.scaffolders.javascript import scaffold_javascript
 from sparkstart.scaffolders.devcontainer import scaffold_devcontainer
+from sparkstart.scaffolders.direnv import scaffold_direnv
+from sparkstart.scaffolders.compose import scaffold_compose
+from sparkstart.scaffolders.guides import scaffold_getting_started
+from sparkstart.scaffolders.tools import scaffold_tools
+
+from sparkstart.utils.output import print_project_summary
+from sparkstart.utils.suggestions import suggest_git_not_found
 
 
 def create_project(
-    path: pathlib.Path, 
-    github: bool = False, 
-    lang: str = "python", 
+    path: pathlib.Path,
+    github: bool = False,
+    lang: str = "python",
     devcontainer: bool = False,
-    template: str | None = None
+    template: str | None = None,
+    tutorial: bool = False,
+    tools: bool = False
 ) -> None:
     """
     Make a fully-initialised project directory.
@@ -46,29 +55,51 @@ def create_project(
     lang   : str           language: "python", "rust", "javascript", or "cpp"
     devcontainer : bool    if True, generate .devcontainer config
     template     : str     template name (e.g. "pygame") or None
+    tutorial     : bool    if True, create educational game project with tests
+    tools        : bool    if True, include formatters, linters, and pre-commit hooks
     """
     # Create project folder
     path.mkdir(parents=False, exist_ok=False)
-    
-    # Add README
-    if lang == "cpp":
-        (path / "README.md").write_text(README_CPP.format(name=path.name))
-    else:
-        (path / "README.md").write_text(README_TEXT.format(name=path.name))
 
-    # Language-specific scaffolding
-    if lang == "python":
-        scaffold_python(path, template)
-    elif lang == "rust":
-        scaffold_rust(path)
-    elif lang == "javascript":
-        scaffold_javascript(path)
-    elif lang == "cpp":
-        scaffold_cpp(path)
-    else:
-        raise ValueError(f"Unknown language: {lang}. Choose: python, rust, javascript, cpp")
+    # Language-specific scaffolding (tutorial or standard)
+    if tutorial:
+        from sparkstart.scaffolders.tutorial import (
+            scaffold_tutorial_python,
+            scaffold_tutorial_rust,
+            scaffold_tutorial_javascript,
+            scaffold_tutorial_cpp,
+        )
 
-    # Dev Container
+        if lang == "python":
+            scaffold_tutorial_python(path)
+        elif lang == "rust":
+            scaffold_tutorial_rust(path)
+        elif lang == "javascript":
+            scaffold_tutorial_javascript(path)
+        elif lang == "cpp":
+            scaffold_tutorial_cpp(path)
+        else:
+            raise ValueError(f"Unknown language: {lang}. Choose: python, rust, javascript, cpp")
+    else:
+        # Add generic README for standard projects
+        if lang == "cpp":
+            (path / "README.md").write_text(README_CPP.format(name=path.name))
+        else:
+            (path / "README.md").write_text(README_TEXT.format(name=path.name))
+
+        # Standard scaffolding
+        if lang == "python":
+            scaffold_python(path, template)
+        elif lang == "rust":
+            scaffold_rust(path)
+        elif lang == "javascript":
+            scaffold_javascript(path)
+        elif lang == "cpp":
+            scaffold_cpp(path)
+        else:
+            raise ValueError(f"Unknown language: {lang}. Choose: python, rust, javascript, cpp")
+
+    # Dev Container + supporting configs
     if devcontainer:
         if shutil.which("docker") is None:
             import typer
@@ -77,10 +108,21 @@ def create_project(
                 fg=typer.colors.YELLOW
             )
         scaffold_devcontainer(path, lang)
+        scaffold_direnv(path, lang)
+        scaffold_compose(path, lang)
+
+    # Educational documentation
+    scaffold_getting_started(path, path.name, lang, devcontainer)
+
+    # Code quality tools (formatters, linters, pre-commit hooks)
+    if tools:
+        scaffold_tools(path, lang)
 
     # git repository
     if shutil.which("git") is None:
-        raise RuntimeError("`git` executable not found in PATH")
+        import typer
+        typer.secho(suggest_git_not_found(), fg=typer.colors.RED)
+        raise typer.Exit(1)
 
     # GitHub remote + push (optional)
     token: str | None = None
@@ -108,6 +150,9 @@ def create_project(
 
         run_shell(["git", "remote", "add", "origin", auth_repo_url], cwd=path)
         run_shell(["git", "push", "-u", "origin", "main"], cwd=path)
+
+    # Print friendly summary
+    print_project_summary(path, lang, devcontainer, github, tutorial, tools)
 
 
 def delete_project(path: pathlib.Path, github: bool = False) -> None:

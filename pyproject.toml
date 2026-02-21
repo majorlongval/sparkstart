@@ -1,13 +1,57 @@
 [project]
 name = "sparkstart"
-version = "0.1.2"
-description = "Spin-up a ready-to-code project with one command"
+version = "1.0.0"
+description = "Create a new project in seconds, not hours. sparkstart handles all the boring setup so you can start coding immediately."
 authors = [{ name = "Jordan Longval", email = "majorlongval@gmail.com" }]
+readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.8"
 dependencies = ["typer", "requests", "python-dotenv"]
+keywords = [
+    "project",
+    "scaffolding",
+    "generator",
+    "quickstart",
+    "cli",
+    "python",
+    "rust",
+    "javascript",
+    "cpp",
+    "template",
+    "devops",
+    "docker",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/majorlongval/sparkstart"
+Repository = "https://github.com/majorlongval/sparkstart"
+Documentation = "https://github.com/majorlongval/sparkstart#readme"
+Issues = "https://github.com/majorlongval/sparkstart/issues"
+Changelog = "https://github.com/majorlongval/sparkstart/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
-test = ["pytest", "pyinstaller"]
+test = ["pytest", "pytest-cov", "pytest-xdist"]
+dev = ["black", "ruff", "mypy", "pytest", "pytest-cov"]
+build = ["build", "twine", "wheel"]
 
 [project.scripts]
 sparkstart = "sparkstart.cli:app"
@@ -15,3 +59,17 @@ sparkstart = "sparkstart.cli:app"
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+
+[tool.black]
+line-length = 88
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "-v --tb=short"
+

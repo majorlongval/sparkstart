@@ -1,0 +1,150 @@
+"""Templates for code quality tools (formatters, linters, pre-commit hooks)."""
+
+import textwrap
+
+# Pre-commit configuration for different languages
+PRECOMMIT_PYTHON = textwrap.dedent("""
+    repos:
+      - repo: https://github.com/psf/black
+        rev: 23.12.1
+        hooks:
+          - id: black
+            language_version: python3.12
+
+      - repo: https://github.com/charliermarsh/ruff-pre-commit
+        rev: v0.1.11
+        hooks:
+          - id: ruff
+            args: [--fix]
+
+      - repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v4.5.0
+        hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-yaml
+          - id: check-added-large-files
+""").strip()
+
+PRECOMMIT_RUST = textwrap.dedent("""
+    repos:
+      - repo: local
+        hooks:
+          - id: rustfmt
+            name: rustfmt
+            entry: rustfmt
+            language: system
+            types: [rust]
+            pass_filenames: true
+
+          - id: clippy
+            name: clippy
+            entry: cargo clippy -- -D warnings
+            language: system
+            types: [rust]
+            pass_filenames: false
+
+      - repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v4.5.0
+        hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-yaml
+""").strip()
+
+PRECOMMIT_JAVASCRIPT = textwrap.dedent("""
+    repos:
+      - repo: local
+        hooks:
+          - id: prettier
+            name: prettier
+            entry: npx prettier --write
+            language: system
+            types: [javascript, jsx, typescript, tsx, json, yaml, markdown]
+
+          - id: eslint
+            name: eslint
+            entry: npx eslint --fix
+            language: system
+            types: [javascript, jsx, typescript, tsx]
+
+      - repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v4.5.0
+        hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-yaml
+          - id: check-json
+""").strip()
+
+PRECOMMIT_CPP = textwrap.dedent("""
+    repos:
+      - repo: local
+        hooks:
+          - id: clang-format
+            name: clang-format
+            entry: clang-format -i
+            language: system
+            types: [c++, c]
+            pass_filenames: true
+
+      - repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v4.5.0
+        hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-yaml
+          - id: check-added-large-files
+""").strip()
+
+# Requirements files for Python tools
+REQUIREMENTS_PYTHON_TOOLS = textwrap.dedent("""
+    # Code Quality Tools
+    black==23.12.1          # Code formatter
+    ruff==0.1.11           # Fast Python linter
+    pylint==3.0.3          # Comprehensive linter
+    mypy==1.7.1            # Static type checker
+    pytest-cov==4.1.0      # Code coverage for tests
+""").strip()
+
+# npm scripts configuration (to be added to package.json)
+NPM_SCRIPTS_JAVASCRIPT = {
+    "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint src/ --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
+    "type-check": "tsc --noEmit"
+}
+
+# EditorConfig for consistent formatting
+EDITORCONFIG = textwrap.dedent("""
+    # EditorConfig helps maintain consistent coding styles across different editors and IDEs
+
+    root = true
+
+    [*]
+    charset = utf-8
+    end_of_line = lf
+    insert_final_newline = true
+    trim_trailing_whitespace = true
+
+    [*.py]
+    indent_style = space
+    indent_size = 4
+    max_line_length = 100
+
+    [*.{js,jsx,ts,tsx,json}]
+    indent_style = space
+    indent_size = 2
+
+    [*.{yml,yaml}]
+    indent_style = space
+    indent_size = 2
+
+    [Makefile]
+    indent_style = tab
+
+    [*.md]
+    trim_trailing_whitespace = false
+    max_line_length = 120
+""").strip()
