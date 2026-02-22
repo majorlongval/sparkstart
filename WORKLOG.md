@@ -158,3 +158,44 @@ How hard is it to install these for the user?
 **Verified:**
 - ✅ Positive Test: Running on valid environment passes silently.
 - ✅ Negative Test: Simulated missing `docker` binary → correctly warned and attempted to open browser.
+
+## 2026-02-21: CI — Auto-publish to PyPI on master merge
+
+**Change:** Replaced manual tag-triggered PyPI releases with automatic publishing on every merge to master.
+
+**Details:**
+- GitHub Actions workflow now triggers on push to master
+- Added `contents:write` permission to the release job so it can create tags
+- No more manual `git tag` + push dance to release
+
+---
+
+## 2026-02-21: v1.0.1 Patch Release
+
+**Bumped version** from 1.0.0 → 1.0.1.
+
+No functional changes — version bump only.
+
+---
+
+## 2026-02-21: Fix — Wizard UX & Quickstart Accuracy
+
+**Issues fixed:**
+- Replaced gendered wizard emoji 🧙‍♂️ with neutral 🧙 in wizard prompt and help text
+- Clarified git/GitHub section: local git repo is always created; GitHub push is explicitly optional
+- Removed empty `requirements.txt` from Python scaffolder (deps live in `pyproject.toml`)
+- Corrected quickstart install command from `pip install -r requirements.txt` to `pip install -e '.[test]'` in both quickstart output and `GETTING_STARTED.md` template
+
+---
+
+## 2026-02-21: Feat — Integration Test Skeleton
+
+**Added:** `tests/integration/test_integration.py` — a skeleton of end-to-end tests that run `sparkstart new` and verify that generated projects actually install, run, and pass their own tests.
+
+**Coverage planned (all marked TODO):**
+- All four languages (Python, Rust, JavaScript, C++)
+- Templates (pygame)
+- Flags: `--devcontainer`, `--tools`, `--tutorial`
+- Git init verification
+
+**Status:** Skeleton only — test bodies are stubbed with `TODO` and will be fleshed out as the test suite matures.
