@@ -152,7 +152,7 @@ sparkstart version        Show version
 - **Use `--tools`** to enforce code quality from the start
 - **Use `--tutorial`** to learn a new language with guided exercises
 - **Check `GETTING_STARTED.md`** in your new project for language-specific commands
-- **GitHub token** is saved to `.projinit.env` (never committed to git)
+- **GitHub token** is saved to `.sparkstart.env` (never committed to git)
 
 ## 🔧 Requirements
 
@@ -313,8 +313,8 @@ sparkstart new my-project
 
 ### GitHub Token Issues?
 
-1. The token is saved to `.projinit.env` (never committed)
-2. To regenerate: Remove `.projinit.env` and re-run with `--github`
+1. The token is saved to `.sparkstart.env` (never committed)
+2. To regenerate: Remove `.sparkstart.env` and re-run with `--github`
 3. Personal access token docs: [GitHub Docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
 ## 🤝 Contributing
