@@ -7,8 +7,10 @@ PYTHON_MAIN_GAME = textwrap.dedent("""
     import os
     from enum import Enum
     from typing import List, Tuple, Optional
-    
+
     # Initialize Pygame - must be called before using any pygame functionality
+    if os.environ.get('WAYLAND_DISPLAY'):
+        os.environ.setdefault('SDL_VIDEODRIVER', 'wayland')
     pygame.init()
     
     
