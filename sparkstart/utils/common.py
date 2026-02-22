@@ -13,15 +13,15 @@ def run_shell(cmd: List[str], cwd: pathlib.Path) -> None:
         )
 
 def get_project_token(project_root: pathlib.Path) -> str | None:
-    """Return token from .projinit.env or '' if file missing/empty."""
-    return dotenv_values(project_root / ".projinit.env").get("GITHUB_TOKEN", "")
+    """Return token from .sparkstart.env or '' if file missing/empty."""
+    return dotenv_values(project_root / ".sparkstart.env").get("GITHUB_TOKEN", "")
 
 def save_project_token(project_root: pathlib.Path, token: str | None) -> None:
-    """Persist token to .projinit.env and ensure it's git-ignored."""
-    (project_root / ".projinit.env").write_text(f"GITHUB_TOKEN={token}\n")
+    """Persist token to .sparkstart.env and ensure it's git-ignored."""
+    (project_root / ".sparkstart.env").write_text(f"GITHUB_TOKEN={token}\n")
 
     gi = project_root / ".gitignore"
     lines: list[str] = gi.read_text().splitlines() if gi.exists() else []
-    if ".projinit.env" not in lines:
-        lines.append(".projinit.env")
+    if ".sparkstart.env" not in lines:
+        lines.append(".sparkstart.env")
         gi.write_text("\n".join(lines) + "\n")
