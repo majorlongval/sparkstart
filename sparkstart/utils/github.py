@@ -24,7 +24,7 @@ def create_github_repo(repo_name: str, token: str | None = None) -> str:
     if not token:
         raise RuntimeError(
             "GitHub token not provided.\n"
-            "Save one in .projinit.env, set $GITHUB_TOKEN, or pass --github without a token to be prompted."
+            "Save one in .sparkstart.env, set $GITHUB_TOKEN, or pass --github without a token to be prompted."
         )
 
     r = requests.post(

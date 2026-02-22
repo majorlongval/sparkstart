@@ -122,7 +122,7 @@ $ sparkstart new cpp-project --lang cpp --devcontainer
 • Use --devcontainer for consistent development across machines
 • Use --tools to enforce code quality from the start
 • Use --tutorial to learn a new language with guided exercises
-• GitHub token is saved to .projinit.env (never committed)
+• GitHub token is saved to .sparkstart.env (never committed)
 • Each project includes GETTING_STARTED.md with language-specific setup
 • Run 'sparkstart new' without arguments for interactive wizard
 """
