@@ -3,5 +3,5 @@ import textwrap
 GITIGNORE_JAVASCRIPT = textwrap.dedent("""
     node_modules/
     .DS_Store
-    .projinit.env
+    .sparkstart.env
 """).strip()
