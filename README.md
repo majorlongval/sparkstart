@@ -20,7 +20,10 @@
 ## 🚀 Quick Start
 
 ```bash
-# Install
+# Install (recommended)
+pipx install sparkstart
+
+# Or with pip (Windows / python.org macOS only)
 pip install sparkstart
 
 # Create a project (interactive wizard)
@@ -174,9 +177,24 @@ sparkstart version        Show version
 
 ### From PyPI (Recommended)
 
+Install with `pipx` (works on all platforms — Linux, macOS, WSL, Windows):
+
 ```bash
-pip install sparkstart
+pipx install sparkstart
 ```
+
+`pipx` installs CLI tools in isolated environments and exposes the binary globally.
+If you don't have `pipx` yet:
+
+| Platform | Command |
+|----------|---------|
+| Ubuntu / WSL | `sudo apt install pipx` |
+| macOS (Homebrew) | `brew install pipx` |
+| Windows / macOS (python.org) | `pip install pipx` |
+
+> **Why not `pip install` directly?** On Ubuntu 23.04+, macOS with Homebrew Python,
+> and WSL, `pip install` to the system Python is blocked (PEP 668). `pipx` is the
+> correct tool for installing Python CLI applications globally.
 
 ### From Source
 
