@@ -25,114 +25,252 @@ def get_getting_started(name: str, lang: str, has_devcontainer: bool) -> str:
             - **compose.yaml** - Docker Compose for orchestration
             """).strip()
 
-    lang_guides = {
-        "python": textwrap.dedent("""
+    # Build language-specific setup section conditionally based on has_devcontainer
+    if lang == "python":
+        if has_devcontainer:
+            lang_section = textwrap.dedent("""
 
-            ## Python Setup
+                ## Python Setup
 
-            ### Option 1: Using direnv (Recommended)
-            ```bash
-            direnv allow           # Auto-activates virtual environment
-            pip install -e '.[test]'
-            ```
+                ### Option 1: Using direnv (Recommended)
 
-            If you don't have direnv, install it: https://direnv.net
+                **What is direnv?** `direnv` is a shell extension that automatically activates
+                your virtual environment whenever you `cd` into this project folder — no manual
+                `source .venv/bin/activate` needed.
 
-            ### Option 2: Manual Virtual Environment
-            ```bash
-            python3 -m venv .venv
-            source .venv/bin/activate
-            pip install -e '.[test]'
-            ```
+                **The `.envrc` file** (already in your project) tells direnv to create and activate
+                a `.venv` virtual environment automatically.
 
-            ### Running Your Code
-            ```bash
-            python src/main.py
-            ```
+                **Install direnv first** if you haven't already:
+                | Platform | Command |
+                |----------|---------|
+                | Ubuntu / WSL | `sudo apt install direnv` then add `eval "$(direnv hook bash)"` to `~/.bashrc` |
+                | macOS (Homebrew) | `brew install direnv` then add `eval "$(direnv hook zsh)"` to `~/.zshrc` |
+                | Other | https://direnv.net/docs/installation.html |
 
-            ### Running Tests
-            ```bash
-            pytest tests/
-            ```
+                After installing, reload your shell (`source ~/.bashrc` or open a new terminal), then:
+                ```bash
+                direnv allow    # Trust this project's .envrc — activates .venv automatically
+                pip install -e '.[test]'
+                ```
 
-            ### Code Quality
-            ```bash
-            black src/          # Format code
-            ruff check src/     # Lint for issues
-            pylint src/main.py  # Detailed analysis
-            ```
-            """).strip(),
+                ### Option 2: Manual Virtual Environment
+                ```bash
+                python3 -m venv .venv
+                source .venv/bin/activate
+                pip install -e '.[test]'
+                ```
 
-        "rust": textwrap.dedent("""
+                ### Running Your Code
+                ```bash
+                python src/main.py
+                ```
 
-            ## Rust Setup
+                ### Running Tests
+                ```bash
+                pytest tests/
+                ```
 
-            ### Option 1: Using direnv (Recommended)
-            ```bash
-            direnv allow           # Auto-sets Rust flags
-            ```
+                ### Code Quality
+                ```bash
+                black src/          # Format code
+                ruff check src/     # Lint for issues
+                pylint src/main.py  # Detailed analysis
+                ```
+                """).strip()
+        else:
+            lang_section = textwrap.dedent("""
 
-            ### Option 2: Manual Setup
-            ```bash
-            rustup update
-            cargo build
-            ```
+                ## Python Setup
 
-            ### Running Your Code
-            ```bash
-            cargo run
-            ```
+                ### Virtual Environment
+                ```bash
+                python3 -m venv .venv
+                source .venv/bin/activate
+                pip install -e '.[test]'
+                ```
 
-            ### Running Tests
-            ```bash
-            cargo test
-            ```
+                ### Running Your Code
+                ```bash
+                python src/main.py
+                ```
 
-            ### Code Quality
-            ```bash
-            cargo fmt             # Format code
-            cargo clippy          # Lint for issues
-            cargo clippy --fix    # Auto-fix common issues
-            ```
-            """).strip(),
+                ### Running Tests
+                ```bash
+                pytest tests/
+                ```
 
-        "javascript": textwrap.dedent("""
+                ### Code Quality
+                ```bash
+                black src/          # Format code
+                ruff check src/     # Lint for issues
+                pylint src/main.py  # Detailed analysis
+                ```
+                """).strip()
 
-            ## JavaScript/Node.js Setup
+    elif lang == "rust":
+        if has_devcontainer:
+            lang_section = textwrap.dedent("""
 
-            ### Option 1: Using direnv (Recommended)
-            ```bash
-            direnv allow           # Auto-loads Node.js
-            npm install
-            ```
+                ## Rust Setup
 
-            ### Option 2: Manual Setup
-            ```bash
-            node --version         # Check Node.js is installed
-            npm install
-            ```
+                ### Option 1: Using direnv (Recommended)
 
-            ### Running Your Code
-            ```bash
-            npm start
-            # or
-            node src/main.js
-            ```
+                **What is direnv?** `direnv` is a shell extension that automatically applies
+                environment variables whenever you `cd` into this project folder.
 
-            ### Running Tests
-            ```bash
-            npm test
-            ```
+                **The `.envrc` file** (already in your project) tells direnv to set `RUSTFLAGS`
+                and other Rust-specific environment variables automatically.
 
-            ### Code Quality
-            ```bash
-            npm run lint           # ESLint
-            npm run format         # Prettier
-            npm run lint -- --fix  # Auto-fix issues
-            ```
-            """).strip(),
+                **Install direnv first** if you haven't already:
+                | Platform | Command |
+                |----------|---------|
+                | Ubuntu / WSL | `sudo apt install direnv` then add `eval "$(direnv hook bash)"` to `~/.bashrc` |
+                | macOS (Homebrew) | `brew install direnv` then add `eval "$(direnv hook zsh)"` to `~/.zshrc` |
+                | Other | https://direnv.net/docs/installation.html |
 
-        "cpp": textwrap.dedent("""
+                After installing, reload your shell (`source ~/.bashrc` or open a new terminal), then:
+                ```bash
+                direnv allow    # Trust this project's .envrc — auto-sets RUSTFLAGS and env vars
+                ```
+
+                ### Option 2: Manual Setup
+                ```bash
+                rustup update
+                cargo build
+                ```
+
+                ### Running Your Code
+                ```bash
+                cargo run
+                ```
+
+                ### Running Tests
+                ```bash
+                cargo test
+                ```
+
+                ### Code Quality
+                ```bash
+                cargo fmt             # Format code
+                cargo clippy          # Lint for issues
+                cargo clippy --fix    # Auto-fix common issues
+                ```
+                """).strip()
+        else:
+            lang_section = textwrap.dedent("""
+
+                ## Rust Setup
+
+                ### Building
+                ```bash
+                rustup update
+                cargo build
+                ```
+
+                ### Running Your Code
+                ```bash
+                cargo run
+                ```
+
+                ### Running Tests
+                ```bash
+                cargo test
+                ```
+
+                ### Code Quality
+                ```bash
+                cargo fmt             # Format code
+                cargo clippy          # Lint for issues
+                cargo clippy --fix    # Auto-fix common issues
+                ```
+                """).strip()
+
+    elif lang == "javascript":
+        if has_devcontainer:
+            lang_section = textwrap.dedent("""
+
+                ## JavaScript/Node.js Setup
+
+                ### Option 1: Using direnv (Recommended)
+
+                **What is direnv?** `direnv` is a shell extension that automatically applies
+                environment variables whenever you `cd` into this project folder.
+
+                **The `.envrc` file** (already in your project) tells direnv to load the correct
+                Node.js version and set project-specific environment variables automatically.
+
+                **Install direnv first** if you haven't already:
+                | Platform | Command |
+                |----------|---------|
+                | Ubuntu / WSL | `sudo apt install direnv` then add `eval "$(direnv hook bash)"` to `~/.bashrc` |
+                | macOS (Homebrew) | `brew install direnv` then add `eval "$(direnv hook zsh)"` to `~/.zshrc` |
+                | Other | https://direnv.net/docs/installation.html |
+
+                After installing, reload your shell (`source ~/.bashrc` or open a new terminal), then:
+                ```bash
+                direnv allow    # Trust this project's .envrc — auto-loads Node.js version
+                npm install
+                ```
+
+                ### Option 2: Manual Setup
+                ```bash
+                node --version         # Check Node.js is installed
+                npm install
+                ```
+
+                ### Running Your Code
+                ```bash
+                npm start
+                # or
+                node src/main.js
+                ```
+
+                ### Running Tests
+                ```bash
+                npm test
+                ```
+
+                ### Code Quality
+                ```bash
+                npm run lint           # ESLint
+                npm run format         # Prettier
+                npm run lint -- --fix  # Auto-fix issues
+                ```
+                """).strip()
+        else:
+            lang_section = textwrap.dedent("""
+
+                ## JavaScript/Node.js Setup
+
+                ### Setup
+                ```bash
+                node --version         # Check Node.js is installed
+                npm install
+                ```
+
+                ### Running Your Code
+                ```bash
+                npm start
+                # or
+                node src/main.js
+                ```
+
+                ### Running Tests
+                ```bash
+                npm test
+                ```
+
+                ### Code Quality
+                ```bash
+                npm run lint           # ESLint
+                npm run format         # Prettier
+                npm run lint -- --fix  # Auto-fix issues
+                ```
+                """).strip()
+
+    elif lang == "cpp":
+        lang_section = textwrap.dedent("""
 
             ## C++ Setup
 
@@ -160,10 +298,12 @@ def get_getting_started(name: str, lang: str, has_devcontainer: bool) -> str:
             clang-format -i src/*.cpp    # Format code
             clang-tidy src/main.cpp      # Lint for issues
             ```
-            """).strip(),
-    }
+            """).strip()
 
-    base += "\n\n" + lang_guides.get(lang, "")
+    else:
+        lang_section = ""
+
+    base += "\n\n" + lang_section
 
     if has_devcontainer:
         base += textwrap.dedent("""
@@ -190,7 +330,7 @@ def get_getting_started(name: str, lang: str, has_devcontainer: bool) -> str:
             - Works on Windows, Mac, Linux
             """).strip()
 
-    base += textwrap.dedent("""
+    learning_resources = textwrap.dedent("""
 
         ## Useful Commands
 
@@ -210,10 +350,37 @@ def get_getting_started(name: str, lang: str, has_devcontainer: bool) -> str:
 
         ## Learning Resources
 
-        - **Direnv Guide**: https://direnv.net/docs/installation.html
         - **Docker Docs**: https://docs.docker.com/
         - **Language Docs**:
         """).strip()
+
+    if has_devcontainer:
+        learning_resources = textwrap.dedent("""
+
+            ## Useful Commands
+
+            ### Git Workflow
+            ```bash
+            git status              # Check changes
+            git add .               # Stage files
+            git commit -m "message" # Create commit
+            git push                # Push to remote
+            ```
+
+            ### Viewing Documentation
+            ```bash
+            cat README.md           # Project overview
+            cat .devcontainer/README.md  # Dev environment details (if using containers)
+            ```
+
+            ## Learning Resources
+
+            - **Direnv Guide**: https://direnv.net/docs/installation.html
+            - **Docker Docs**: https://docs.docker.com/
+            - **Language Docs**:
+            """).strip()
+
+    base += "\n\n" + learning_resources
 
     lang_docs = {
         "python": "  - https://docs.python.org/3/",
