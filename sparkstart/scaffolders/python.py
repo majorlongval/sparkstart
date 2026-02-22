@@ -139,13 +139,21 @@ def scaffold_python(path: pathlib.Path, template: str | None = None) -> None:
         deps = 'dependencies = ["requests", "python-dotenv"]' # Restoring original deps
     
     pyproject = textwrap.dedent(f'''
+        # pyproject.toml — project metadata and dependencies
+        #
+        # This is the standard Python project manifest (PEP 517/518).
+        # pip, build tools, and IDEs all read it automatically.
+
         [project]
         name = "{path.name}"
         version = "0.1.0"
         description = ""
         requires-python = ">=3.8"
+
+        # Runtime dependencies — installed when someone runs: pip install -e .
         {deps}
 
+        # Optional dependency groups — install with: pip install -e ".[test]"
         [project.optional-dependencies]
         test = ["pytest"]
     ''').strip()
