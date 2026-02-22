@@ -19,7 +19,7 @@ GITIGNORE_CPP = textwrap.dedent("""
     
     # General
     .DS_Store
-    .projinit.env
+    .sparkstart.env
     
     # Testing
     test_results/

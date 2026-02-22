@@ -5,5 +5,5 @@ GITIGNORE_PYTHON = textwrap.dedent("""
     .venv/
     *.pyc
     .DS_Store
-    .projinit.env
+    .sparkstart.env
 """).strip()
