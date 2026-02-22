@@ -14,8 +14,11 @@ def scaffold_python(path: pathlib.Path, template: str | None = None) -> None:
             import pygame
             import sys
             import random
+            import os
 
             def main():
+                if os.environ.get('WAYLAND_DISPLAY'):
+                    os.environ.setdefault('SDL_VIDEODRIVER', 'wayland')
                 pygame.init()
                 clock = pygame.time.Clock()
                 
