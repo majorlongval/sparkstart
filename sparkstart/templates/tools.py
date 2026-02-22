@@ -4,6 +4,23 @@ import textwrap
 
 # Pre-commit configuration for different languages
 PRECOMMIT_PYTHON = textwrap.dedent("""
+    # .pre-commit-config.yaml
+    #
+    # Runs code-quality checks automatically before every `git commit`.
+    # Catches formatting issues and lint errors early, before they ever hit your history.
+    #
+    # First-time setup (once per machine):
+    #   pip install pre-commit
+    #   pre-commit install        # registers these hooks with this git repo
+    #
+    # Run manually on all files:
+    #   pre-commit run --all-files
+    #
+    # Skip in an emergency (use sparingly):
+    #   git commit --no-verify
+    #
+    # Learn more: https://pre-commit.com
+
     repos:
       - repo: https://github.com/psf/black
         rev: 23.12.1
@@ -27,6 +44,20 @@ PRECOMMIT_PYTHON = textwrap.dedent("""
 """).strip()
 
 PRECOMMIT_RUST = textwrap.dedent("""
+    # .pre-commit-config.yaml
+    #
+    # Runs code-quality checks automatically before every `git commit`.
+    # Catches formatting and clippy warnings early, before they hit your history.
+    #
+    # First-time setup (once per machine):
+    #   pip install pre-commit
+    #   pre-commit install        # registers these hooks with this git repo
+    #
+    # Run manually on all files:
+    #   pre-commit run --all-files
+    #
+    # Learn more: https://pre-commit.com
+
     repos:
       - repo: local
         hooks:
@@ -53,6 +84,21 @@ PRECOMMIT_RUST = textwrap.dedent("""
 """).strip()
 
 PRECOMMIT_JAVASCRIPT = textwrap.dedent("""
+    # .pre-commit-config.yaml
+    #
+    # Runs code-quality checks automatically before every `git commit`.
+    # Catches formatting and lint issues early, before they hit your history.
+    #
+    # First-time setup (once per machine):
+    #   pip install pre-commit
+    #   pre-commit install        # registers these hooks with this git repo
+    #
+    # Run manually on all files:
+    #   pre-commit run --all-files
+    #
+    # Note: requires Node.js for prettier and eslint hooks.
+    # Learn more: https://pre-commit.com
+
     repos:
       - repo: local
         hooks:
@@ -78,6 +124,21 @@ PRECOMMIT_JAVASCRIPT = textwrap.dedent("""
 """).strip()
 
 PRECOMMIT_CPP = textwrap.dedent("""
+    # .pre-commit-config.yaml
+    #
+    # Runs code-quality checks automatically before every `git commit`.
+    # Catches formatting issues early, before they hit your history.
+    #
+    # First-time setup (once per machine):
+    #   pip install pre-commit
+    #   pre-commit install        # registers these hooks with this git repo
+    #
+    # Run manually on all files:
+    #   pre-commit run --all-files
+    #
+    # Note: requires clang-format to be installed on your system.
+    # Learn more: https://pre-commit.com
+
     repos:
       - repo: local
         hooks:
@@ -99,12 +160,22 @@ PRECOMMIT_CPP = textwrap.dedent("""
 
 # Requirements files for Python tools
 REQUIREMENTS_PYTHON_TOOLS = textwrap.dedent("""
+    # requirements-dev.txt — development-only tools
+    #
+    # These are NOT needed to run your project — they help you write better code.
+    # Install with:  pip install -r requirements-dev.txt
+    #
+    #   Formatters:    auto-fix code style so you never have to think about it
+    #   Linters:       catch bugs and bad patterns before they become real problems
+    #   Type checker:  find type errors before they become runtime surprises
+    #   Coverage:      shows which lines your tests actually exercise
+
     # Code Quality Tools
-    black==23.12.1          # Code formatter
-    ruff==0.1.11           # Fast Python linter
-    pylint==3.0.3          # Comprehensive linter
-    mypy==1.7.1            # Static type checker
-    pytest-cov==4.1.0      # Code coverage for tests
+    black==23.12.1          # Formatter: rewrites your code to a consistent style
+    ruff==0.1.11           # Linter: fast, catches common bugs and style issues
+    pylint==3.0.3          # Linter: more comprehensive, slower, but very thorough
+    mypy==1.7.1            # Type checker: catches type errors statically
+    pytest-cov==4.1.0      # Coverage: adds --cov flag to pytest
 """).strip()
 
 # npm scripts configuration (to be added to package.json)
@@ -118,7 +189,14 @@ NPM_SCRIPTS_JAVASCRIPT = {
 
 # EditorConfig for consistent formatting
 EDITORCONFIG = textwrap.dedent("""
-    # EditorConfig helps maintain consistent coding styles across different editors and IDEs
+    # .editorconfig
+    #
+    # Tells editors (VS Code, PyCharm, Vim, Neovim, Emacs, ...) how to format code:
+    # indentation, line endings, charset, and more. When everyone on a team uses it,
+    # you stop seeing noisy diffs caused by tab/space or line-ending differences.
+    #
+    # Most editors support it out of the box or via a free plugin.
+    # Learn more: https://editorconfig.org
 
     root = true
 
