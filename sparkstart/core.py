@@ -3,7 +3,7 @@ core.py – all the heavy lifting for sparkstart
     • folder scaffold          (src/, README, .gitignore, etc.)
     • local virtual-env        (.venv) for Python
     • git repo + first commit
-    • optional --github push   (per-project token in .projinit.env or $GITHUB_TOKEN)
+    • optional --github push   (per-project token in .sparkstart.env or $GITHUB_TOKEN)
 
 Requires: requests, python-dotenv
     pip install requests python-dotenv
@@ -127,7 +127,7 @@ def create_project(
     # GitHub remote + push (optional)
     token: str | None = None
     if github:
-        # token preference: .projinit.env  >  $GITHUB_TOKEN  >  prompt user
+        # token preference: .sparkstart.env  >  $GITHUB_TOKEN  >  prompt user
         token = get_project_token(path) or os.getenv("GITHUB_TOKEN", "")
         if not token:
             import typer  # lazy import to avoid hard dependency in library mode
@@ -135,7 +135,7 @@ def create_project(
             typer.secho("Opening GitHub to generate a token...", fg=typer.colors.YELLOW)
             webbrowser.open(NEW_TOKEN_URL.format(name=path.name))
             token = typer.prompt(
-                "Paste your new GitHub token here (saved to .projinit.env, never committed)"
+                "Paste your new GitHub token here (saved to .sparkstart.env, never committed)"
             )
             save_project_token(path, token)
 
@@ -160,19 +160,19 @@ def delete_project(path: pathlib.Path, github: bool = False) -> None:
     Delete *path* directory; optionally delete its remote GitHub repo.
 
     Token resolution order:
-        1.  .projinit.env inside the project
+        1.  .sparkstart.env inside the project
         2.  $GITHUB_TOKEN
         3.  raise RuntimeError if --github but no token found
     """
     if not path.exists():
         raise RuntimeError(f"{path} does not exist")
 
-    # remove remote first (so local folder still has .projinit.env if needed)
+    # remove remote first (so local folder still has .sparkstart.env if needed)
     if github:
         token = get_project_token(path) or os.getenv("GITHUB_TOKEN")
         if not token:
             raise RuntimeError(
-                "No GitHub token found in .projinit.env or $GITHUB_TOKEN"
+                "No GitHub token found in .sparkstart.env or $GITHUB_TOKEN"
             )
         owner = get_github_user(token)
         delete_github_repo(owner, path.name, token)
